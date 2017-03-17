@@ -3,23 +3,25 @@ require ('minitest/rg')
 require_relative ('../guest')
 require_relative ('../room')
 require_relative ('../song')
+require_relative ('../club')
 
 class TestKaraoke < Minitest::Test
 
   def setup
-    @room1 = Room.new("Room 1",[],10,[])
-    @guest1 = Guest.new("Ron Burgundy",15, @song2)
-    @guest2 = Guest.new("Jeremy Renner",20, @song1)
-    @guest3 = Guest.new("Charlotte Church",25, @song3)
-    @guest4 = Guest.new("The Muffin Man",450, @song6)
-    @guests = [@guest1,@guest2,@guest3,@guest4]
     @song1 = Song.new("Space Oddity", "David Bowie")
     @song2 = Song.new("Your Song", "Elton John")
     @song3 = Song.new("Single Ladies", "Beyonce")
     @song4 = Song.new("The Scientist", "Coldplay")
     @song5 = Song.new("Bridge Over Troubled Water", "Simon and Garfunkle")
     @song6 = Song.new("Let It Be", "The Beatles")
+    @room1 = Room.new("Room 1",[],10,[],5)
+    @guest1 = Guest.new("Ron Burgundy",15, @song2)
+    @guest2 = Guest.new("Jeremy Renner",20, @song1)
+    @guest3 = Guest.new("Charlotte Church",0, @song3)
+    @guest4 = Guest.new("The Muffin Man",450, @song6)
+    @guests = [@guest1,@guest2,@guest3,@guest4]
     @songcollection = [@song1,@song2,@song3,@song4,@song5,@song6]
+    @club1 = Club.new("Sugar Rush",0)
   end
 
   def test_guest_has_name
@@ -35,7 +37,7 @@ class TestKaraoke < Minitest::Test
   end
 
   def test_ron_in_the_room
-    @room1.check_in_guest("Ron Burgundy", @guests)
+    @room1.check_in_guest("Ron Burgundy", @guests, @club1)
     persons = @room1.people
     name = persons[0].name
     monie = persons[0].monie
@@ -43,9 +45,14 @@ class TestKaraoke < Minitest::Test
     assert_equal(10, monie)
   end
 
+  def test_cc_is_poor
+    result = @room1.check_in_guest("Charlotte Church", @guests, @club1)
+    assert_equal("Charlotte Church doesn't have the cash", result)
+  end
+
   def test_tmm_in_the_room
-    @room1.check_in_guest("Ron Burgundy", @guests)
-    @room1.check_in_guest("The Muffin Man", @guests)
+    @room1.check_in_guest("Ron Burgundy", @guests, @club1)
+    @room1.check_in_guest("The Muffin Man", @guests, @club1)
     @room1.check_out_guest("Ron Burgundy")
     assert_equal([@guest4], @room1.people)
   end
@@ -60,10 +67,10 @@ class TestKaraoke < Minitest::Test
   def test_room_is_full
     num = 0
     while num < 11  do
-      @room1.check_in_guest("Ron Burgundy", @guests)
+      @room1.check_in_guest("The Muffin Man", @guests, @club1)
       num +=1
     end
-    result = @room1.check_in_guest("Ron Burgundy", @guests)
+    result = @room1.check_in_guest("Ron Burgundy", @guests, @club1)
 
     assert_equal("Room is Full", result)
   end

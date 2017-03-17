@@ -5,6 +5,7 @@ class Guest
   def initialize(name, monie, fav_song)
     @name = name
     @monie = monie
+    @fav_song = fav_song
   end
 
   def pay_money(amount)
