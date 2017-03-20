@@ -11,5 +11,5 @@ class Guest
   def pay_money(amount)
     @monie -= amount
   end
-
+  
 end

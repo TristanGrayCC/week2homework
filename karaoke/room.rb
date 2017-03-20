@@ -4,7 +4,7 @@ class Room
 
   def initialize(name, people, max_size, songs, cost)
     @name = name
-    @people = people
+    @people = people || []
     @max_size = max_size
     @songs = songs
     @cost = cost
